@@ -1,4 +1,4 @@
-name: dockerloginDEVQA
+name: dockerloginDEV
 
 # Controls when the workflow will run
 on:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch:
+
 jobs:
   LogintodockerhubDEV:
     runs-on: ubuntu-latest
@@ -17,18 +17,11 @@ jobs:
     - name: docker login
       uses: docker/login-action@v2.1.0
       with:
-       registry: registry-1.docker.io
-       username: ${{secrets.DOCKERHUBUSERNAME}}
+       username: ${{vars.DOCKERHUBUSERNAME}}
        password: ${{secrets.DOCKERHUBPASSWORD}}
-  LogintodockerhubQA:
-    runs-on: ubuntu-latest
-    environment: QA
-    steps:
-    - uses: actions/checkout@v3
-    - name: docker login
-      uses: docker/login-action@v2.1.0
-      with:
-       registry: registry-1.docker.io
-       username: ${{secrets.DOCKERHUBUSERNAME}}
-       password: ${{secrets.DOCKERHUBPASSWORD}}
-docker
+    - name: Docker Build
+      run: docker build -t github-actions-demo .
+    - name: Docker Tag
+      run: docker tag github-actions-demo ram2388/github-actions-demo
+    - name: Docker Push
+      run: docker push ram2388/github-actions-demo
